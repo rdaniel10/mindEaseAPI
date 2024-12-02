@@ -80,7 +80,8 @@ namespace mindEaseAPI.Controllers
                         appointmentSession = booking.appointmentSession,
                         clientName = getClient.clientName,
                         clientGender = getClient.clientGender,
-                        activeAppointment = booking.activeAppointment
+                        activeAppointment = booking.activeAppointment,
+                        bookingId = booking.bookingId,
                     };
                     details.Add(obj);
                 }
@@ -137,6 +138,36 @@ namespace mindEaseAPI.Controllers
                 else
                 {
                     return Accepted(new { message = "Upcoming appointment detected." });
+                }
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
+        }
+
+        [HttpPost("DeactivateAppointment/{bookingId}")]
+        public async Task<IActionResult> DeactivateAppointment([FromRoute] string bookingId)
+        {
+            try
+            {
+                var checkAppoint = await _context.booking_information.FindAsync(bookingId);
+
+                if (checkAppoint != null)
+                {
+                    var newAppoint = checkAppoint;
+                    newAppoint.activeAppointment = false;
+
+                    _context.Entry(checkAppoint).State = EntityState.Detached;
+                    _context.Entry(newAppoint).State = EntityState.Modified;
+
+                    _context.SaveChanges();
+
+                    return Ok(new {message = "Updated Successfully."});
+                }
+                else
+                {
+                    return Ok(new { message = "No appointment detected." });
                 }
             }
             catch (Exception ex)

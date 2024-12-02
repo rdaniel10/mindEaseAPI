@@ -13,5 +13,7 @@
         public string clientGender { get; set; }
 
         public bool activeAppointment { get; set; }
+
+        public string bookingId { get; set; }
     }
 }

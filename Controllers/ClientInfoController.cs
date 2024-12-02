@@ -66,6 +66,20 @@ namespace mindEaseAPI.Controllers
 
             try
             {
+                var checkAdmin = await _context.client_information.Where(o => o.clientUsername.Equals(body.clientUsername) && o.clientUsername.Equals("admin")).FirstOrDefaultAsync();
+
+                if (checkAdmin != null)
+                {
+                    if (checkAdmin.clientPassword.Equals(body.clientPassword))
+                    {
+                        return Ok(new { message = "Admin login Successfully." });
+                    }
+                    else
+                    {
+                        return BadRequest(new { message = "Admin wrong Password." });
+                    }
+                }
+
                 var checkUser = await _context.client_information.Where(o => o.clientUsername.Equals(body.clientUsername)).FirstOrDefaultAsync();
 
                 if(checkUser != null)
